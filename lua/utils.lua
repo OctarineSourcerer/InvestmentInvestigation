@@ -32,3 +32,8 @@ function hasAllyHere(side)
     local other_side = getSideAt()
     return side ~= other_side and not wesnoth.sides.is_enemy(side, other_side)
 end
+
+-- arrays are damn weird in WML, so we have to make sure we convert them first
+function storeArrayWML(wmlName, array)
+    wml.array_access.set(wmlName, arrayToTag(array))
+end

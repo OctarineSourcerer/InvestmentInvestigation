@@ -1,5 +1,6 @@
 -- Handle viewing sides as on a specific "team" on the player's turn.
 -- Each side may have a "disguise" team, and after the players turn will revert to its real team 
+-- Bear in mind that `utils.lua` is loaded by the campaign, so consider that Required
 
 realTeams = wml.array_access.get_proxy("realTeams")
 sideDisguises = wml.array_access.get_proxy("sideDisguises")
@@ -10,15 +11,27 @@ function setTeams(teamsTable)
         wesnoth.sides.get(id).team_name = teamName
     end
 end
+-- These two functions are practically identical, but making a single function that both of these use is actually less readable in the end
+-- Well, unless I look the variable up in the global namespace _G, but let's not go there
+function setDisguise(sideID, disguiseTeam)
+    sideDisguises[sideID] = disguiseTeam
+    storeArrayWML("sideDisguises", sideDisguises)
+end
+function setRealTeam(sideID, realTeam)
+    realTeams[sideID] = realTeam
+    storeArrayWML("realTeams", realTeams)
+end
+
 -- store each side's current team in realTeams
 function storeRealTeams()
     local teamsCache = {}
     local sides = wesnoth.sides.find{}
     for id,side in pairs(sides) do
+        -- We could use setRealTeam directly, but I'd prefer not to store the whole array every time we change a team
         teamsCache[id] = side.team_name
     end
     realTeams = teamsCache
-    wml.array_variables["realTeams"] = arrayToTag(realTeams)
+    storeArrayWML("realTeams", realTeams)
 end
 
 -- temporarily switch sides from real teams to their player-chosen disguises. Used at the beginning of player's turn
@@ -37,7 +50,7 @@ function preserveRealTeamChange(sideID)
     local disguiseTeam = sideDisguises[sideID]
     -- Team has been changed from shown during the turn
     if disguiseTeam ~= nil and side.team_name ~= disguiseTeam then
-        realTeams[sideID] = side.team_name
+        setRealTeam(sideID, side.team_name)
     end
 end
 function resetTeamsToReal()
@@ -50,20 +63,20 @@ function resetTeamsToReal()
 end
 -- When player clears whether they consider a team as ally or enemy
 function clearSideDisguise(sideID)
-    sideDisguise = sideDisguises[sideID]
+    local sideDisguise = sideDisguises[sideID]
     if showingRealTeams or sideDisguise == nil then
         return
     end
     preserveRealTeamChange(sideID)
     setTeams({[sideID] = realTeams[sideID]})
-    sideDisguises[sideID] = nil
+    setDisguise(sideID, nil)
 end
-function changeSideDisguise(sideID, newDisguise, applyNow)
+function applyNewDisguise(sideID, newDisguise, applyNow)
     if applyNow then
         preserveRealTeamChange(sideID)
         wesnoth.sides.get(sideID).team_name = newShownTeam
     end
-    sideDisguises[sideID] = newDisguise
+    setDisguise(sideID, newDisguise)
 end
 function sideHasDisguise(side)
     sideID = side or getSideAt()
