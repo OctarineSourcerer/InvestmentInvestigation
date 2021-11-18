@@ -5,7 +5,7 @@
 -- Store what the current teams are while showing a different allegiance, if applicable
 realTeams = shallowWMLArrayMirror("realTeams")
 -- What team names are set at the beginning of a player's turn. eg {1="hah", 2="ENEMY", 3="Indrith"}
--- No disguise = same as realTeams name. I'd like it to be nil, but I currently don't know how to make an arraymirror store in WML when it has holes in. WML's setarray uses ipairs, which immediately aborts iteration on first lacking index.
+-- No disguise = same as realTeams name. I'd like it to be nil, but... see shallowWMLArrayMirror for why I can't.
 sideDisguises = shallowWMLArrayMirror("sideDisguises")
 
 if wml.variables["showingRealTeams"] == nil then

@@ -50,6 +50,7 @@ end
 -- A homerolled and limited kin to wml.array_access.get_proxy. While this won't reflect changes made to its elements in WML, it WILL reflect object addition/removal through this object
 -- So don't do `mirror["haha"].property = "foo"`, but mirror["haha"] = modifiedWithFoo works
 -- Works very well with arrays of primitives, used to track the list of realTeams and disguiseTeams properly
+-- They also cannot be sparse and successfully store in WML. WML's setarray uses ipairs, which immediately aborts iteration on first lacking index. May be fixable by storing individual indices? if I can (or need to) figure that out
 function shallowWMLArrayMirror(wmlName)
     local innerdata = tagToArray(wml.array_access.get(wmlName))
     local mirrortable = {}
