@@ -1,6 +1,6 @@
 function map(table, f)
     local result = {}
-    for i,v in ipairs(table) do
+    for i,v in pairs(table) do
         result[i] = f(v)
     end
     return result
@@ -33,7 +33,49 @@ function hasAllyHere(side)
     return side ~= other_side and not wesnoth.sides.is_enemy(side, other_side)
 end
 
+function printArr(array)
+    local str = ""
+    for i, v in pairs(array) do
+        str = str .. " " .. tostring(v)
+    end
+    return str
+end
 -- arrays are damn weird in WML, so we have to make sure we convert them first
+-- this is ONLY with arrays; it will have to have elements from 1 to X.
 function storeArrayWML(wmlName, array)
+    print("storing " .. printArr(array))
     wml.array_access.set(wmlName, arrayToTag(array))
+end
+
+-- A homerolled and limited kin to wml.array_access.get_proxy. While this won't reflect changes made to its elements in WML, it WILL reflect object addition/removal through this object
+-- So don't do `mirror["haha"].property = "foo"`, but mirror["haha"] = modifiedWithFoo works
+-- Works very well with arrays of primitives, used to track the list of realTeams and disguiseTeams properly
+function shallowWMLArrayMirror(wmlName)
+    local innerdata = tagToArray(wml.array_access.get(wmlName))
+    local mirrortable = {}
+
+    local result = setmetatable(mirrortable, {
+        -- the inner array that gets written to with every index. Means that __newindex ALWAYS fires on mirrortable, even if its already present in innerdata
+        innerdata = innerdata,
+        wmlName = wmlName,
+
+        -- Will always fire as it sets in innerdata. When doing mirror[x] = thing, update in WML
+        __newindex = function(outertable, key, value)
+            innerdata[key] = value
+            print("new index in " .. wmlName .. " : innerdata is " .. printArr(innerdata))
+            storeArrayWML(wmlName, innerdata)
+        end,
+
+        -- Let's not sync on get, that'd get a little problematic
+        __index = innerdata,
+
+        __ipairs = function(table)
+            return ipairs(innerdata)
+        end,
+
+        __pairs = function(table)
+            return pairs(innerdata)
+        end
+    })
+    return result
 end
