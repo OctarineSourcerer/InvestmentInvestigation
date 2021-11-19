@@ -66,12 +66,10 @@ function shallowWMLArrayMirror(wmlName)
         -- Will always fire as it sets in innerdata. When doing mirror[x] = thing, update in WML
         __newindex = function(outertable, key, value)
             innerdata[key] = value
-            print("new index in " .. wmlName .. " : innerdata is " .. printArr(innerdata))
             wml.variables[wmlArrayAddress(wmlName, key)] = value
         end,
 
         __index = function(outertable, key)
-            print(wmlArrayAddress(wmlName, key))
             local wmlVal = wml.variables[wmlArrayAddress(wmlName, key)]
             -- If WML has a different value, it's almost definitely been set elsewhere; respect that if possible
             if wmlVal ~= innerdata[key] then
