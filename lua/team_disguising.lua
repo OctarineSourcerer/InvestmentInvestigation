@@ -5,20 +5,20 @@
 -- Store what the current teams are while showing a different allegiance, if applicable
 realTeams = shallowWMLArrayMirror("realTeams")
 -- What team names are set at the beginning of a player's turn. eg {1="hah", 2="ENEMY", 3="Indrith"}
--- No disguise = same as realTeams name. I'd like it to be nil, but... see shallowWMLArrayMirror for why I can't.
+-- No disguise = same as realTeams name. 
 sideDisguises = shallowWMLArrayMirror("sideDisguises")
 
 if wml.variables["showingRealTeams"] == nil then
     wml.variables["showingRealTeams"] = true
 end
 
--- initialise disguises to be a full array. 
-if #getmetatable(sideDisguises).innerdata == 0 then
-    local sides = wesnoth.sides.find{}
-    for i, side in ipairs(sides) do
-        sideDisguises[i] = side.team_name
-    end
-end
+-- -- initialise disguises to be a full array. 
+-- if #getmetatable(sideDisguises).innerdata == 0 then
+--     local sides = wesnoth.sides.find{}
+--     for i, side in ipairs(sides) do
+--         sideDisguises[i] = side.team_name
+--     end
+-- end
 
 -- set teams according to teamsTable: {[sideID] = "teamName"}
 function setTeams(teamsTable)
@@ -79,10 +79,9 @@ function applyNewDisguise(sideID, newDisguise, applyNow)
         preserveRealTeamChange(sideID)
         wesnoth.sides.get(sideID).team_name = newDisguise
     end
-    print("NEW DISGUISE " .. newDisguise)
     sideDisguises[sideID] = newDisguise
 end
 function sideHasDisguise(side)
     sideID = side or getSideAt()
-    return sideDisguises[side] ~= realTeams[side]
+    return sideDisguises[sideID] ~= realTeams[sideID]
 end

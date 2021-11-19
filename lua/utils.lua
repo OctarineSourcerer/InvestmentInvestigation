@@ -47,10 +47,13 @@ function storeArrayWML(wmlName, array)
     wml.array_access.set(wmlName, arrayToTag(array))
 end
 
--- A homerolled and limited kin to wml.array_access.get_proxy. While this won't reflect changes made to its elements in WML, it WILL reflect object addition/removal through this object
--- So don't do `mirror["haha"].property = "foo"`, but mirror["haha"] = modifiedWithFoo works
--- Works very well with arrays of primitives, used to track the list of realTeams and disguiseTeams properly
--- They also cannot be sparse and successfully store in WML. WML's setarray uses ipairs, which immediately aborts iteration on first lacking index. May be fixable by storing individual indices? if I can (or need to) figure that out
+function wmlArrayAddress(arrName, index)
+    return string.format("%s[%d].value", arrName, index - 1)
+end
+
+-- A homerolled and limited kin to wml.array_access.get_proxy. While this won't reflect changes within its elements in WML, it WILL reflect element addition/removal
+-- So don't do `mirror["haha"].property = "foo"`, but mirror["haha"] = modifiedWithFoo works.
+-- Works best with arrays of primitives, used to track the list of realTeams and disguiseTeams properly
 function shallowWMLArrayMirror(wmlName)
     local innerdata = tagToArray(wml.array_access.get(wmlName))
     local mirrortable = {}
@@ -64,11 +67,18 @@ function shallowWMLArrayMirror(wmlName)
         __newindex = function(outertable, key, value)
             innerdata[key] = value
             print("new index in " .. wmlName .. " : innerdata is " .. printArr(innerdata))
-            storeArrayWML(wmlName, innerdata)
+            wml.variables[wmlArrayAddress(wmlName, key)] = value
         end,
 
-        -- Let's not sync on get, that'd get a little problematic
-        __index = innerdata,
+        __index = function(outertable, key)
+            print(wmlArrayAddress(wmlName, key))
+            local wmlVal = wml.variables[wmlArrayAddress(wmlName, key)]
+            -- If WML has a different value, it's almost definitely been set elsewhere; respect that if possible
+            if wmlVal ~= innerdata[key] then
+                innerdata[key] = wmlVal
+            end
+            return wmlVal
+        end,
 
         __ipairs = function(table)
             return ipairs(innerdata)
