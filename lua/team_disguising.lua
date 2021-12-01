@@ -81,6 +81,8 @@ function applyNewDisguise(sideID, newDisguise, applyNow)
     end
     sideDisguises[sideID] = newDisguise
 end
+-- Technically, if a side changes team in player's turn, this will return true in that turn
+-- Not practically an issue? as they are still shown correctly, and will remain so if disguise cleared
 function sideHasDisguise(side)
     local sideID = side or getSideAt()
     if sideID == nil then
