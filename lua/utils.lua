@@ -20,16 +20,25 @@ function getSideAt(x,y)
         x or wml.variables["x1"], 
         y or wml.variables["y1"]
     local unit = wesnoth.units.get(x, y)
+    if unit == nil then
+        return nil
+    end
     return unit.side
 end
 -- return whether the given side has an enemy at WML's x1 and y1
 function hasEnemyHere(side)
     local other_side = getSideAt()
+    if other_side == nil then
+        return nil
+    end
     return side ~= other_side and wesnoth.sides.is_enemy(side, other_side)
 end
 -- return whether the given side has an ally at WML's x1 and y1
 function hasAllyHere(side)
     local other_side = getSideAt()
+    if other_side == nil then
+        return nil
+    end
     return side ~= other_side and not wesnoth.sides.is_enemy(side, other_side)
 end
 

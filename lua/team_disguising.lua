@@ -67,7 +67,7 @@ end
 -- When player clears whether they consider a team as ally or enemy
 function clearSideDisguise(sideID)
     local sideDisguise = sideDisguises[sideID]
-    if wml.variables["showingRealTeams"] or ~sideHasDisguise(sideID) then
+    if wml.variables["showingRealTeams"] or not(sideHasDisguise(sideID)) then
         return
     end
     preserveRealTeamChange(sideID)
@@ -82,6 +82,10 @@ function applyNewDisguise(sideID, newDisguise, applyNow)
     sideDisguises[sideID] = newDisguise
 end
 function sideHasDisguise(side)
-    sideID = side or getSideAt()
-    return sideDisguises[sideID] ~= realTeams[sideID]
+    local sideID = side or getSideAt()
+    if sideID == nil then
+        return false
+    end
+    local disguise = sideDisguises[sideID]
+    return disguise ~= nil and disguise ~= realTeams[sideID]
 end
