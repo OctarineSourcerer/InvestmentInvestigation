@@ -47,18 +47,19 @@ end
 -- If a side's name has changed since we masked it, we keep that changed name as real
 function preserveRealTeamChange(sideID)
     if wml.variables["showingRealTeams"] then
+        print("Showing real teams already, so...")
         return
     end
     local side = wesnoth.sides.get(sideID)
     local disguiseTeam = sideDisguises[sideID]
     -- Team has been changed from shown during the turn
-    if disguiseTeam ~= nil and side.team_name ~= disguiseTeam then
+    if side.team_name ~= disguiseTeam then
         realTeams[sideID] = side.team_name
     end
 end
 function resetTeamsToReal()
     -- If we were showing non-real teams, then check for if team was changed again during turn. If so, respect that change
-    for id,team in pairs(sideDisguises) do
+    for id,team in pairs(wesnoth.sides.find{}) do
         preserveRealTeamChange(id)
     end
     setTeams(realTeams)
