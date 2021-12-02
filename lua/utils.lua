@@ -60,6 +60,13 @@ function wmlArrayAddress(arrName, index)
     return string.format("%s[%d].value", arrName, index - 1)
 end
 
+function countSideUnits(sideID)
+    local living = wesnoth.units.find_on_map {
+        side = sideID,
+    }
+    return #living
+end
+
 -- A homerolled and limited kin to wml.array_access.get_proxy. While this won't reflect changes within its elements in WML, it WILL reflect element addition/removal
 -- So don't do `mirror["haha"].property = "foo"`, but mirror["haha"] = modifiedWithFoo works.
 -- Works best with arrays of primitives, used to track the list of realTeams and disguiseTeams properly
