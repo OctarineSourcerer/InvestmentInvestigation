@@ -4,7 +4,7 @@ description="A research scenario to test an aspect of tension in strategy games.
 At the bottom of this add-on's details in the Add-on Manager, you'll see a website link. Hit -> to go to that and give feedback if needed :)"
 email="dsdgom@essex.ac.uk"
 icon="icons/icon-editor.png"
-tags="tension,research"
+tags="tension,research,beta"
 title="Unto Others"
 type="scenario"
 version="0.1.0"
