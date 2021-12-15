@@ -104,3 +104,12 @@ function shallowWMLArrayMirror(wmlName)
     })
     return result
 end
+
+-- Return the number of Indrith units left that AREN'T the ritual
+function indrithNonRitualCount()
+        local living = wesnoth.units.find_on_map {
+            side = 3,
+            wml.tag["not"] { role = "ritual" }
+        }
+    return #living
+end
