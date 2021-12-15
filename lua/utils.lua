@@ -1,3 +1,6 @@
+local MAGES_SIDE = 2
+local INDRITH_SIDE = 3
+
 function map(table, f)
     local result = {}
     for i,v in pairs(table) do
@@ -107,9 +110,29 @@ end
 
 -- Return the number of Indrith units left that AREN'T the ritual
 function indrithNonRitualCount()
-        local living = wesnoth.units.find_on_map {
-            side = 3,
-            wml.tag["not"] { role = "ritual" }
-        }
+    local living = wesnoth.units.find_on_map {
+        side = 3,
+        wml.tag["not"] { role = "ritual" }
+    }
     return #living
+end
+
+-- Everyone dead except the ritual?
+-- Can be done more cleanly
+function allTargetsDead()
+    -- Get side of dying unit 
+    local side = wml.variables["unit"].side
+    local magesLeft = countSideUnits(2)
+    -- Exclude ritual, for the Indrith
+    local indrithLeft = indrithNonRitualCount()
+
+    if side == MAGES_SIDE then
+        magesLeft = magesLeft - 1
+    elseif side == INDRITH_SIDE then
+        indrithLeft = indrithLeft - 1
+    end
+
+    print(string.format("Mages left: %s", magesLeft))
+    print(string.format("Indrith left: %s", indrithLeft))
+    return (magesLeft == 0 and indrithLeft <= 0)
 end
