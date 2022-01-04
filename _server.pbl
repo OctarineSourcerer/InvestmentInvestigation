@@ -7,7 +7,7 @@ icon="icons/icon-editor.png"
 tags="tension,research,beta"
 title="Unto Others"
 type="scenario"
-version="0.1.0"
+version="1.0.0"
 [feedback]
 	topic_id=55212
 [/feedback]
