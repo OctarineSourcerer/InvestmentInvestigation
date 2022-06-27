@@ -1,13 +1,15 @@
 author="Dan Gomme"
-description="A research scenario to test an aspect of tension in strategy games. It's technically playable, but is currently being sanity-checked to see if it does what I intend it to without confusing people. If you want to help with that, great! (and thank you!). It's very short - the turn limit is 10 to give an idea.
+description="A research scenario to test an aspect of tension in strategy games. If you's like to help with that, great! (and thank you!). It's very short - the turn limit is 10 to give an idea of just how short. After the scenario there will be a questionnaire, and if you could answer that I'd be a very happy PhD student indeed.
 
-At the bottom of this add-on's details in the Add-on Manager, you'll see a website link. Hit -> to go to that and give feedback if needed :)"
+If you need to give feedback on the scenario itself - for example if there's a bug I've missed - then feel free to let me know via the feedback topic on the Wesnoth forums.
+
+Thank you for your time! And have a wonderful day"
 email="dsdgom@essex.ac.uk"
 icon="icons/icon-editor.png"
 tags="tension,research"
 title="Unto Others"
 type="scenario"
-version="1.0.2"
+version="1.0.3"
 [feedback]
 	topic_id=55212
 [/feedback]
